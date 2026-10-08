@@ -34,14 +34,21 @@ Stack: ASP.NET Core 8 Web API + SignalR, React + TS (Vite), PostgreSQL (EF Core)
   dev double-mount; rename buttons lacked an accessible name.
 - README written.
 
-## In progress
-- Nothing mid-edit.
+- **Deployed and live (2026-10-08):**
+  - Frontend (Vercel project `liveboard-tajveed`): https://liveboard-tajveed.vercel.app
+  - API (Render, Docker, Frankfurt, free): https://liveboard-api-hzdt.onrender.com (WebSockets work through Render)
+  - Render env: `ConnectionStrings__Default` (Neon `liveboard` DB), `Jwt__Key` (generated),
+    `Cors__Origins__0 = https://liveboard-tajveed.vercel.app`. Vercel env: `VITE_API_BASE_URL` = Render URL.
+  - Two-user Playwright run against production: 20/20 (card ~0.8 s, drag ~1.6 s to the other user).
+    Fixed after going live: share-dialog tip layout, "(you)" leaking into presence-avatar initials.
+- Portfolio: featured card + 4-shot gallery in `tajveed-portfolio/public/projects/liveboard/`, About mention.
+
+## Status
+Project complete. Possible follow-ups (not requested): card comments/due dates, per-board activity history
+persisted in the DB, Redis backplane if it ever needs more than one API instance.
 
 ## Next steps
-1. Deploy: Render Blueprint (`liveboard-api`) with `ConnectionStrings__Default` (Neon `liveboard` DB) and
-   `Cors__Origins__0`; Vercel (root `frontend`, `VITE_API_BASE_URL`). Owner does account steps.
-2. Verify live (two-user script against production), then README "Live demo" link and portfolio card with
-   screenshots in `tajveed-portfolio/public/projects/liveboard/` (Rule 1).
+- None pending.
 
 ## Decisions & gotchas
 - Writes go through REST (validation, status codes, rate limits); the hub is broadcast + presence only.

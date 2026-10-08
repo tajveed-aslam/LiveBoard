@@ -3,8 +3,11 @@
 **A real-time collaborative Kanban board.** Drag cards between columns, share the board with a link, and watch
 everyone's changes appear instantly. No refreshing, no "who has the latest version?".
 
-**Live demo:** _coming soon_ · No sign-up needed: click **Try the live demo**, then **Share** and open the link in a
-private window to see two people editing the same board.
+**Live demo: https://liveboard-tajveed.vercel.app** · No sign-up needed: click **Try the live demo**, then **Share**
+and open the link in a private window to see two people editing the same board. The API runs on a free tier that
+sleeps when idle, so the first visit can take up to a minute to wake.
+
+![LiveBoard with two people online, an editing badge and the live activity feed](docs/board.jpg)
 
 | | |
 |---|---|
