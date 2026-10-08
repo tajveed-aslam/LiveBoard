@@ -24,15 +24,24 @@ Stack: ASP.NET Core 8 Web API + SignalR, React + TS (Vite), PostgreSQL (EF Core)
   API integration on SQLite via WebApplicationFactory (permissions, share links, moves, column delete, 40
   concurrent moves from two users), and real-time tests with two live SignalR clients.
 
+- Frontend (`frontend/`, violet theme): routes `/`, `/login`, `/boards`, `/b/:boardId` (keyed per board),
+  `/join/:token`. `board/useBoard.ts` = REST load + SignalR events + auto-reconnect with full resync;
+  `board/state.ts` = idempotent reducer + `planCardMove` for optimistic drags; `board/BoardCanvas.tsx` = dnd-kit
+  (cards across columns, column reorder, keyboard sensor). Card editor shows "also editing" and
+  "someone else saved → Load their version". Share dialog, presence stack, activity feed, connection status pill.
+- Two-user Playwright run (two isolated browser contexts) against local dev: 20/20 checks pass, no console
+  errors. Found + fixed: guest token race on the first request after sign-in; noisy SignalR logs from React's
+  dev double-mount; rename buttons lacked an accessible name.
+- README written.
+
 ## In progress
-- Frontend (`frontend/`) — not started yet.
+- Nothing mid-edit.
 
 ## Next steps
-1. Frontend from the FitCheck shell: routes `/`, `/login`, `/boards`, `/b/:boardId`, `/join/:token`;
-   @dnd-kit drag-and-drop (cards across columns + column reorder), @microsoft/signalr live sync with
-   reconnect + resync, presence avatars, "X is editing" badges, share modal, activity feed.
-2. Playwright E2E with two browser contexts (two users) proving live sync.
-3. README, deploy (Render + Vercel), portfolio card + screenshots (Rule 1).
+1. Deploy: Render Blueprint (`liveboard-api`) with `ConnectionStrings__Default` (Neon `liveboard` DB) and
+   `Cors__Origins__0`; Vercel (root `frontend`, `VITE_API_BASE_URL`). Owner does account steps.
+2. Verify live (two-user script against production), then README "Live demo" link and portfolio card with
+   screenshots in `tajveed-portfolio/public/projects/liveboard/` (Rule 1).
 
 ## Decisions & gotchas
 - Writes go through REST (validation, status codes, rate limits); the hub is broadcast + presence only.
