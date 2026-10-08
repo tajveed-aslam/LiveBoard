@@ -33,6 +33,8 @@ public sealed class TokenService(IOptions<JwtOptions> jwtOptions, IOptions<DemoO
         [
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
+            // Carried in the token so the SignalR hub can label presence/editing without a DB lookup.
+            new Claim(JwtRegisteredClaimNames.Name, user.DisplayName),
         ];
         if (user.IsGuest)
             claims.Add(new Claim(AppClaims.Guest, "true"));
