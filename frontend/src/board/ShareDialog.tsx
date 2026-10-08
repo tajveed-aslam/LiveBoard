@@ -48,8 +48,10 @@ export function ShareDialog({ boardId, shareToken: initialToken, isOwner, onClos
       </div>
 
       <div className="tip">
-        <strong>See it live:</strong> open the link in a <em>private window</em> or another browser. You&apos;ll join as a
-        second guest, and every drag, edit and new card shows up in both windows instantly.
+        <p>
+          <strong>See it live:</strong> open the link in a <em>private window</em> or another browser. You&apos;ll join
+          as a second guest, and every drag, edit and new card shows up in both windows instantly.
+        </p>
         <button type="button" className="link-button" onClick={() => window.open(link, '_blank', 'noopener')}>
           Open in a new tab
         </button>
