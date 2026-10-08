@@ -1,11 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <!-- The API targets net8.0 (deployment). The tests target the installed runtime so the in-memory TestServer
+         matches the framework's System.Text.Json; an 8.x TestServer on a 10.x runtime can't write responses. -->
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>
-    <RollForward>Major</RollForward>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +16,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <!-- Integration tests: the real app in-memory, on SQLite, with real SignalR clients. -->
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.*" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.*" />
   </ItemGroup>
 
   <ItemGroup>
