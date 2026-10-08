@@ -1,0 +1,28 @@
+# .NET
+bin/
+obj/
+*.user
+.vs/
+TestResults/
+
+# Local secrets — copy appsettings.Development.example.json and fill in
+appsettings.Development.json
+appsettings.*.local.json
+.env
+
+# Node / Vite
+node_modules/
+dist/
+*.local
+
+# Editors / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Python (generated pytest runs)
+__pycache__/
+.pytest_cache/
+.venv/

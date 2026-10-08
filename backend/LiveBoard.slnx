@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="LiveBoard.Api/LiveBoard.Api.csproj" />
+  <Project Path="LiveBoard.Tests/LiveBoard.Tests.csproj" />
+</Solution>
