@@ -1,11 +1,21 @@
 import { initials, userColor } from '../colors'
 
-export function Avatar({ userId, name, size = 30, ring = false }: { userId: string; name: string; size?: number; ring?: boolean }) {
+interface AvatarProps {
+  userId: string
+  /** Used for the initials. */
+  name: string
+  /** Hover text; defaults to the name. */
+  title?: string
+  size?: number
+  ring?: boolean
+}
+
+export function Avatar({ userId, name, title, size = 30, ring = false }: AvatarProps) {
   return (
     <span
       className={`avatar ${ring ? 'avatar-ring' : ''}`}
       style={{ width: size, height: size, background: userColor(userId), fontSize: size * 0.4 }}
-      title={name}
+      title={title ?? name}
       aria-hidden
     >
       {initials(name)}
@@ -30,7 +40,7 @@ export function PresenceStack({ users, meId, max = 5 }: PresenceProps) {
       <span className="presence-dot" aria-hidden />
       <div className="presence-stack">
         {shown.map((u) => (
-          <Avatar key={u.userId} userId={u.userId} name={u.userId === meId ? `${u.displayName} (you)` : u.displayName} ring />
+          <Avatar key={u.userId} userId={u.userId} name={u.displayName} title={u.userId === meId ? `${u.displayName} (you)` : u.displayName} ring />
         ))}
         {extra > 0 && <span className="avatar avatar-more">+{extra}</span>}
       </div>
