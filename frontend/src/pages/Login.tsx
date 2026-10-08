@@ -8,11 +8,12 @@ export default function Login() {
   const { session, login, register, startGuest } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const from = (location.state as { from?: string } | null)?.from ?? '/app'
+  const from = (location.state as { from?: string } | null)?.from ?? '/boards'
 
   const [mode, setMode] = useState<'login' | 'register'>('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [displayName, setDisplayName] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -33,19 +34,25 @@ export default function Login() {
 
   function onSubmit(event: FormEvent) {
     event.preventDefault()
-    void run(() => (mode === 'login' ? login(email, password) : register(email, password)))
+    void run(() => (mode === 'login' ? login(email, password) : register(email, password, displayName.trim() || undefined)))
   }
 
   return (
     <div className="auth-page">
-      <div className="auth-card card">
+      <div className="auth-card panel">
         <Brand />
         <h1>{mode === 'login' ? 'Sign in' : 'Create your account'}</h1>
         <p className="muted">
-          {mode === 'login' ? 'Welcome back — your analysis history is waiting.' : 'Keep every CV analysis in your own history.'}
+          {mode === 'login' ? 'Welcome back — your boards are waiting.' : 'Keep your boards and collaborate under your own name.'}
         </p>
 
         <form onSubmit={onSubmit} className="stack-form">
+          {mode === 'register' && (
+            <label>
+              Display name
+              <input autoComplete="name" maxLength={40} value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="How collaborators see you" />
+            </label>
+          )}
           <label>
             Email
             <input type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -76,7 +83,7 @@ export default function Login() {
         </p>
 
         <div className="divider"><span>or</span></div>
-        <button className="btn btn-ghost" disabled={busy} onClick={() => void run(startGuest)}>
+        <button className="btn btn-ghost" disabled={busy} onClick={() => void run(() => startGuest(true))}>
           Continue as guest
         </button>
       </div>
