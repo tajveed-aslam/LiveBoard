@@ -16,7 +16,8 @@ import { arrayMove, horizontalListSortingStrategy, SortableContext, sortableKeyb
 import { useMemo, useState, type Dispatch } from 'react'
 import { ApiError, api, type Board, type Card } from '../api'
 import { CardFace, type EditorBadge } from './CardView'
-import { columnDragId, ColumnView } from './ColumnView'
+import { ColumnView } from './ColumnView'
+import { columnDragId } from './ids'
 import { planCardMove, type BoardAction } from './state'
 
 interface Props {

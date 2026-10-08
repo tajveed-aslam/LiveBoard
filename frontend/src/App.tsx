@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import { useAuth } from './auth-context'
 import BoardPage from './pages/BoardPage'
 import BoardsPage from './pages/BoardsPage'
@@ -13,6 +13,12 @@ function RequireAuth({ children }: { children: ReactNode }) {
   return session ? children : <Navigate to="/login" replace state={{ from: location.pathname }} />
 }
 
+/** Remount the board page per board so its live connection and state never leak between boards. */
+function BoardRoute() {
+  const { boardId } = useParams()
+  return <BoardPage key={boardId} />
+}
+
 export default function App() {
   return (
     <Routes>
@@ -20,7 +26,7 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/join/:token" element={<JoinPage />} />
       <Route path="/boards" element={<RequireAuth><BoardsPage /></RequireAuth>} />
-      <Route path="/b/:boardId" element={<RequireAuth><BoardPage /></RequireAuth>} />
+      <Route path="/b/:boardId" element={<RequireAuth><BoardRoute /></RequireAuth>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

@@ -5,9 +5,7 @@ import { useState, type FormEvent } from 'react'
 import { ApiError, api, type Column } from '../api'
 import { InlineEdit } from '../components/InlineEdit'
 import { CardView, type EditorBadge } from './CardView'
-
-export const columnDragId = (id: string) => `col:${id}`
-export const columnBodyId = (id: string) => `body:${id}`
+import { columnBodyId, columnDragId } from './ids'
 
 interface Props {
   boardId: string
@@ -18,9 +16,15 @@ interface Props {
 }
 
 export function ColumnView({ boardId, column, editorsByCard, onOpenCard, onError }: Props) {
-  const sortable = useSortable({ id: columnDragId(column.id), data: { type: 'column', columnId: column.id } })
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: columnDragId(column.id),
+    data: { type: 'column', columnId: column.id },
+  })
   // Separate droppable for the card list, so empty columns still accept cards.
-  const body = useDroppable({ id: columnBodyId(column.id), data: { type: 'column-body', columnId: column.id } })
+  const { setNodeRef: setBodyRef, isOver } = useDroppable({
+    id: columnBodyId(column.id),
+    data: { type: 'column-body', columnId: column.id },
+  })
 
   async function rename(title: string) {
     try {
@@ -42,16 +46,16 @@ export function ColumnView({ boardId, column, editorsByCard, onOpenCard, onError
 
   return (
     <section
-      ref={sortable.setNodeRef}
-      style={{ transform: CSS.Translate.toString(sortable.transform), transition: sortable.transition }}
-      className={`column ${sortable.isDragging ? 'column-placeholder' : ''}`}
+      ref={setNodeRef}
+      style={{ transform: CSS.Translate.toString(transform), transition }}
+      className={`column ${isDragging ? 'column-placeholder' : ''}`}
       aria-label={`${column.title}, ${column.cards.length} cards`}
     >
       <header className="column-header">
         <span
           className="column-handle"
-          {...sortable.attributes}
-          {...sortable.listeners}
+          {...attributes}
+          {...listeners}
           aria-roledescription="draggable column"
           aria-label={`Move column ${column.title}`}
           title="Drag to reorder columns"
@@ -66,7 +70,7 @@ export function ColumnView({ boardId, column, editorsByCard, onOpenCard, onError
       </header>
 
       <SortableContext items={column.cards.map((c) => c.id)} strategy={verticalListSortingStrategy}>
-        <ol ref={body.setNodeRef} className={`card-list ${body.isOver ? 'card-list-over' : ''}`}>
+        <ol ref={setBodyRef} className={`card-list ${isOver ? 'card-list-over' : ''}`}>
           {column.cards.map((card) => (
             <CardView key={card.id} card={card} columnId={column.id} editors={editorsByCard[card.id] ?? []} onOpen={onOpenCard} />
           ))}

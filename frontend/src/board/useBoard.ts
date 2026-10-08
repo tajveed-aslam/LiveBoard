@@ -37,8 +37,11 @@ const MAX_ACTIVITY = 30
  */
 export function useBoard(boardId: string) {
   const [board, dispatch] = useReducer(boardReducer, null)
+  // Event handlers read the latest board (for titles in the activity feed) without re-subscribing.
   const boardRef = useRef<Board | null>(board)
-  boardRef.current = board
+  useEffect(() => {
+    boardRef.current = board
+  }, [board])
 
   const [error, setError] = useState<{ status: number; message: string } | null>(null)
   const [status, setStatus] = useState<ConnectionStatus>('connecting')
@@ -59,20 +62,15 @@ export function useBoard(boardId: string) {
   }, [boardId])
 
   useEffect(() => {
+    // One hook instance per board: the page is keyed by board id, so switching boards starts from fresh state.
     let disposed = false
-    // Reset per-board state when switching boards.
-    setPresence([])
-    setEditing({})
-    setActivity([])
-    setDeletedBy(null)
-    setStatus('connecting')
+    // Fetching is the external sync this effect exists for; state is only set after the request resolves.
+    // oxlint-disable-next-line react/set-state-in-effect
     void reload()
 
     const log = (actor: Actor, text: string) =>
       setActivity((items) => [{ id: ++activityId.current, actor, text, at: Date.now() }, ...items].slice(0, MAX_ACTIVITY))
     const columnTitle = (id: string) => boardRef.current?.columns.find((c) => c.id === id)?.title ?? 'a column'
-    const cardTitle = (id: string) =>
-      boardRef.current?.columns.flatMap((c) => c.cards).find((c) => c.id === id)?.title ?? 'a card'
 
     const connection = new HubConnectionBuilder()
       .withUrl(`${API_BASE}/hubs/board`, { accessTokenFactory: () => currentToken() ?? '', withCredentials: false })

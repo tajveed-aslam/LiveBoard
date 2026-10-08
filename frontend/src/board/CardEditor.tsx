@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ApiError, api, type Card } from '../api'
 import { LABEL_COLORS } from '../colors'
 import { Avatar } from '../components/Avatar'
@@ -24,7 +24,8 @@ export function CardEditor({ boardId, card, columnTitle, otherEditors, onClose, 
   const [color, setColor] = useState<string | null>(card?.color ?? null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const baseVersion = useRef(card?.updatedAt)
+  // The version our draft started from; if the live card moves past it, someone else saved meanwhile.
+  const [baseVersion, setBaseVersion] = useState(card?.updatedAt)
   const cardId = card?.id
 
   // Announce that we're editing this card for as long as the editor is open.
@@ -42,7 +43,7 @@ export function CardEditor({ boardId, card, columnTitle, otherEditors, onClose, 
     )
   }
 
-  const changedRemotely = card.updatedAt !== baseVersion.current && !busy
+  const changedRemotely = card.updatedAt !== baseVersion && !busy
   const dirty = title.trim() !== card.title || description !== card.description || color !== card.color
 
   function loadLatest() {
@@ -50,7 +51,7 @@ export function CardEditor({ boardId, card, columnTitle, otherEditors, onClose, 
     setTitle(card.title)
     setDescription(card.description)
     setColor(card.color)
-    baseVersion.current = card.updatedAt
+    setBaseVersion(card.updatedAt)
   }
 
   async function save() {
@@ -63,7 +64,7 @@ export function CardEditor({ boardId, card, columnTitle, otherEditors, onClose, 
         description,
         color: color ?? '',
       })
-      baseVersion.current = saved.updatedAt
+      setBaseVersion(saved.updatedAt)
       onClose()
     } catch (e) {
       setError(e instanceof ApiError ? e.message : 'Could not save the card.')
