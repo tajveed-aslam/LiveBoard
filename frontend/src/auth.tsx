@@ -38,9 +38,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   configureAuth(session?.token ?? null, logout)
 
   const fromResponse = useCallback(
-    (r: AuthResponse) =>
-      apply({ token: r.token, userId: r.userId, email: r.email, displayName: r.displayName, isGuest: r.isGuest, expiresAt: r.expiresAt }),
-    [apply],
+    (r: AuthResponse) => {
+      // Give the API client the token right away: callers often make a request on the very next line, before
+      // React has re-rendered this provider (which is where configureAuth normally runs).
+      configureAuth(r.token, logout)
+      apply({ token: r.token, userId: r.userId, email: r.email, displayName: r.displayName, isGuest: r.isGuest, expiresAt: r.expiresAt })
+    },
+    [apply, logout],
   )
 
   const value = useMemo<AuthContextValue>(

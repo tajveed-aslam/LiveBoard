@@ -31,7 +31,8 @@ export function InlineEdit({ value, onSave, label, className = '', maxLength = 1
 
   if (!editing) {
     return (
-      <button type="button" className={`inline-edit ${className}`} onClick={start} title={`Rename ${label}`}>
+      // The accessible name says what the button does and still contains the visible text.
+      <button type="button" className={`inline-edit ${className}`} onClick={start} title={`Rename ${label}`} aria-label={`Rename ${label}: ${value}`}>
         {value}
       </button>
     )

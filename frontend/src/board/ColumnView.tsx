@@ -62,7 +62,7 @@ export function ColumnView({ boardId, column, editorsByCard, onOpenCard, onError
         >
           ⠿
         </span>
-        <InlineEdit value={column.title} onSave={rename} label={`column ${column.title}`} className="column-title" />
+        <InlineEdit value={column.title} onSave={rename} label="column" className="column-title" />
         <span className="column-count">{column.cards.length}</span>
         <button type="button" className="icon-button column-delete" aria-label={`Delete column ${column.title}`} onClick={() => void remove()}>
           ×

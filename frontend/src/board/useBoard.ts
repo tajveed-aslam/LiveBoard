@@ -75,7 +75,15 @@ export function useBoard(boardId: string) {
     const connection = new HubConnectionBuilder()
       .withUrl(`${API_BASE}/hubs/board`, { accessTokenFactory: () => currentToken() ?? '', withCredentials: false })
       .withAutomaticReconnect([0, 1000, 3000, 5000, 10000, 20000, 30000])
-      .configureLogging(LogLevel.Warning)
+      .configureLogging({
+        // Errors from a connection we deliberately stopped (unmount, or React's dev double-mount stopping it
+        // mid-negotiation) are expected noise; everything else is reported.
+        log: (level, message) => {
+          if (disposed || level < LogLevel.Warning) return
+          if (level >= LogLevel.Error) console.error(message)
+          else console.warn(message)
+        },
+      })
       .build()
     connectionRef.current = connection
 
